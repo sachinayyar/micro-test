@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the query executed successfully
     if ($result && mysqli_num_rows($result) > 0) {
         // Make service-to-service request to productpage service
-        $microserviceBHost = "microservice-b-service.default.svc.cluster.local";
+        $microserviceBHost = "product-service.test-project.svc.cluster.local";
         $microserviceBPort = "80";
         $redirectUrl = "http://$microserviceBHost:$microserviceBPort/api/v1/products";
         header('Location: ' . $redirectUrl);
