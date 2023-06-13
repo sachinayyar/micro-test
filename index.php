@@ -1,5 +1,6 @@
 <?php
 // Database connection parameters
+// Database connection parameters
 $host = getenv("mysql_host");
 $username = getenv("username");
 $password = getenv("password");
@@ -23,21 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if the query executed successfully
     if ($result && mysqli_num_rows($result) > 0) {
-        // Authentication successful, return a response
-        $response = array('success' => true, 'message' => 'Authentication successful');
-        echo json_encode($response);
+        // Make service-to-service request to productpage service
+        $microserviceBHost = "microservice-b-service.default.svc.cluster.local";
+        $microserviceBPort = "80";
+        $redirectUrl = "http://$microserviceBHost:$microserviceBPort/api/v1/products";
+        header('Location: ' . $redirectUrl);
         exit();
     } else {
-        // Invalid credentials, return an error response
-        $response = array('success' => false, 'message' => 'Invalid username or password');
-        echo json_encode($response);
-        exit();
+        // Invalid credentials, show an error message
+        $error = "Invalid username or password.";
     }
 }
 
 // Close the database connection
 mysqli_close($connection);
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
