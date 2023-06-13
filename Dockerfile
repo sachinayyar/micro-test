@@ -8,7 +8,7 @@ COPY . /var/www/html
 RUN docker-php-ext-install mysqli
 
 # Expose port 80 for web traffic
-EXPOSE 80
+EXPOSE 8080
 
 # Start the PHP development server
-CMD ["php", "-S", "0.0.0.0:80", "-t", "/var/www/html"]
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "/var/www/html"]
