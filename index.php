@@ -1,60 +1,67 @@
 <?php
-// Database connection parameters
-// Database connection parameters
-$host = getenv("mysql_host");
-$username = getenv("username");
-$password = getenv("password");
-$database = getenv("database");
-
-// Establish database connection
-$connection = mysqli_connect($host, $username, $password, $database);
-if (!$connection) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-// Check if the login form is submitted
+// Check if the payment form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve user input
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    // Retrieve payment information
+    $cardNumber = $_POST['card_number'];
+    $cardHolder = $_POST['card_holder'];
+    $expiryDate = $_POST['expiry_date'];
+    $cvv = $_POST['cvv'];
 
-    // Query the database to check if the user exists
-    $query = "SELECT * FROM authentication WHERE username='$username' AND password='$password'";
-    $result = mysqli_query($connection, $query);
+    // Validate the payment information
+    // Add your validation logic here
 
-    // Check if the query executed successfully
-    if ($result && mysqli_num_rows($result) > 0) {
-        // Make service-to-service request to productpage service
-        $microserviceBHost = "product-service.test-project.svc.cluster.local";
-        $microserviceBPort = "80";
-        $redirectUrl = "http://$microserviceBHost:$microserviceBPort/api/v1/products";
-        header('Location: ' . $redirectUrl);
-        exit();
+    // Process the payment
+    $paymentSuccessful = processPayment($cardNumber, $cardHolder, $expiryDate, $cvv);
+
+    // Check if the payment was successful
+    if ($paymentSuccessful) {
+        // Payment successful, show a success message
+        $message = "Payment successful!";
     } else {
-        // Invalid credentials, show an error message
-        $error = "Invalid username or password.";
+        // Payment failed, show an error message
+        $error = "Payment failed. Please try again.";
     }
 }
 
-// Close the database connection
-mysqli_close($connection);
+/**
+ * Process the payment using a payment gateway or API.
+ *
+ * @param string $cardNumber The card number
+ * @param string $cardHolder The card holder's name
+ * @param string $expiryDate The expiry date of the card
+ * @param string $cvv The CVV code
+ * @return bool True if the payment was successful, false otherwise
+ */
+function processPayment($cardNumber, $cardHolder, $expiryDate, $cvv)
+{
+    // Add your payment processing logic here
+    // You can integrate with a payment gateway or API to process the payment
+
+    // Simulating a successful payment
+    return true;
+}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Page</title>
-    <link rel="stylesheet" href="login-page-style.css">
+    <title>Payment Page</title>
+    <link rel="stylesheet" href="payment-page-style.css">
 </head>
 <body>
-    <h2>Login form</h2>
+    <h2>Payment form</h2>
+    <?php if (isset($message)) { ?>
+        <p><?php echo $message; ?></p>
+    <?php } ?>
     <?php if (isset($error)) { ?>
         <p><?php echo $error; ?></p>
     <?php } ?>
     <form method="POST" action="#">
-        <input type="text" name="username" placeholder="Username" required><br><br>
-        <input type="password" name="password" placeholder="Password" required><br><br>
-        <input type="submit" value="Login">
+        <input type="text" name="card_number" placeholder="Card Number" required><br><br>
+        <input type="text" name="card_holder" placeholder="Card Holder Name" required><br><br>
+        <input type="text" name="expiry_date" placeholder="Expiry Date (MM/YY)" required><br><br>
+        <input type="text" name="cvv" placeholder="CVV" required><br><br>
+        <input type="submit" value="Submit Payment">
     </form>
 </body>
 </html>
